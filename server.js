@@ -31,10 +31,10 @@ db.connect()
 
 //Middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL || ["http://localhost:3000", "http://localhost:5000"], // Allow both React dev and prod
-    methods: ["GET", "POST"],
-    credentials: true, // If you're using cookies or sessions
-    allowedHeaders: ["Content-Type", "Authorization"]
+    origin: "*", // Allow both React dev and prod
+    // methods: ["GET", "POST"],
+    // credentials: true, 
+    // allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -159,9 +159,7 @@ app.post("/login", async (req, res) => {
 // --- Socket.io setup ---
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL || ["http://localhost:3000", "http://localhost:5000"],
-        methods: ["GET", "POST"],
-        credentials: true
+        origin: "*",
     }
 });
 
