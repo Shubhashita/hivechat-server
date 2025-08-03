@@ -25,7 +25,7 @@ const server = http.createServer(app);
 //     port: process.env.DB_PORT || 5432
 // });
 const db = new pg.Client({
-    connectionString: process.env.DATABASE_URl,
+    connectionString: process.env.DATABASE_PUBLIC_URl,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
