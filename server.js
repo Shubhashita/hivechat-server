@@ -17,12 +17,16 @@ const server = http.createServer(app);
 
 // const { Pool } = pg;
 
+// const db = new pg.Client({
+//     user: process.env.DB_User || "postgres",
+//     host: process.env.DB_Host || "localhost",
+//     database: process.env.DB_DATABASE || "Chat",
+//     password: process.env.DB_PASSWORD || "123",
+//     port: process.env.DB_PORT || 5432
+// });
 const db = new pg.Client({
-    user: process.env.DB_User || "postgres",
-    host: process.env.DB_Host || "localhost",
-    database: process.env.DB_DATABASE || "Chat",
-    password: process.env.DB_PASSWORD || "123",
-    port: process.env.DB_PORT || 5432
+    connectionString: process.env.DATABASE_URl,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 db.connect()
