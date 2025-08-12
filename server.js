@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from "body-parser";
-import pg from 'pg';
+import {Client} from 'pg';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 import http from 'http';
@@ -12,7 +12,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 10000;
 const saltRounds = 10;
-
 const server = http.createServer(app);
 
 // const { Pool } = pg;
@@ -24,12 +23,12 @@ const server = http.createServer(app);
 //     password: process.env.DB_PASSWORD || "123",
 //     port: process.env.DB_PORT || 5432
 // });
-const db = new pg.Client({
-    connectionString: process.env.DATABASE_URl,
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-db.connect()
+client.connect()
     .then(() => console.log("connected to postgressql"))
     .catch(err => console.error('Database connection error:', err));
 
