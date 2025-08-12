@@ -58,7 +58,7 @@ app.get("/", (req, res) => {
 // Get all users (for sidebar)
 app.get("/users", async (req, res) => {
     try {
-        const result = await db.query("SELECT id, username, email FROM users");
+        const result = await client.query("SELECT id, username, email FROM users");
         res.json(result.rows);
     } catch (err) {
         console.log("Fetch users error:", err);
@@ -73,7 +73,7 @@ app.get("/messages", async (req, res) => {
         return res.status(400).json({ message: "Missing user ids" });
     }
     try {
-        const result = await db.query(
+        const result = await client.query(
             `SELECT * FROM messages
             WHERE (sender_id = $1 AND recipient_id = $2)
                 OR (sender_id = $2 AND recipient_id = $1)
@@ -94,7 +94,7 @@ app.post("/messages", async (req, res) => {
         return res.status(400).json({ message: "Missing fields" });
     }
     try {
-        const result = await db.query(
+        const result = await client.query(
             `INSERT INTO messages (sender_id, recipient_id, text, timestamp)
             VALUES ($1, $2, $3, $4)
              RETURNING *`,
@@ -112,7 +112,7 @@ app.post("/register", async (req, res) => {
     const { username, email, password } = req.body;
 
     try {
-        const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
+        const checkResult = await client.query("SELECT * FROM users WHERE email = $1", [
             email,
         ]);
 
@@ -122,7 +122,7 @@ app.post("/register", async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        await db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
+        await client.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
             [username, email, hashedPassword]
         );
 
@@ -137,7 +137,7 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+        const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
         if (result.rows.length === 0) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -181,9 +181,9 @@ io.on('connection', (socket) => {
         try {
             let result;
             if (data && data.excludeId) {
-                result = await db.query("SELECT id, username, email FROM users WHERE id != $1", [data.excludeId]);
+                result = await client.query("SELECT id, username, email FROM users WHERE id != $1", [data.excludeId]);
             } else {
-                result = await db.query("SELECT id, username, email FROM users");
+                result = await client.query("SELECT id, username, email FROM users");
             }
             socket.emit('usersList', result.rows);
         } catch (err) {
