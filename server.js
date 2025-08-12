@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 10000;
 const saltRounds = 10;
 
 const server = http.createServer(app);
@@ -35,10 +35,10 @@ db.connect()
 
 //Middleware
 app.use(cors({
-    origin: "*", // Allow both React dev and prod
-    // methods: ["GET", "POST"],
-    // credentials: true, 
-    // allowedHeaders: ["Content-Type", "Authorization"]
+    origin: process.env.CLIENT_URL || "http://localhost:3000", // Allow both React dev and prod
+    methods: ["GET", "POST"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -163,7 +163,8 @@ app.post("/login", async (req, res) => {
 // --- Socket.io setup ---
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: process.env.CLIENT_URL || "http://localhost:3000", // React app URL
+        methods: ["GET", "POST"]
     }
 });
 
@@ -214,7 +215,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(port, () => {
+server.listen(port, '0.0.0.0', () => {
     console.log(`✅ Server and Socket.io running on port ${port}`);
 });
 
