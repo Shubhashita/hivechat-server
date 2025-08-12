@@ -123,7 +123,7 @@ app.post("/register", async (req, res) => {
         const checkResult = await client.query("SELECT * FROM users WHERE email = $1", [
             email,
         ]);
-f
+        
         if (checkResult.rows.length > 0) {
             return res.status(409).json({ message: "Email already exists. Try logging in." });
         }
