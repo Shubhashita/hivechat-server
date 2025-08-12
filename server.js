@@ -111,11 +111,19 @@ app.post("/messages", async (req, res) => {
 app.post("/register", async (req, res) => {
     const { username, email, password } = req.body;
 
+    // Log the incoming registration data for debugging
+    console.log("Register request body:", req.body);
+
+    // Input validation
+    if (!username || !email || !password) {
+        return res.status(400).json({ message: "All fields are required." });
+    }
+
     try {
         const checkResult = await client.query("SELECT * FROM users WHERE email = $1", [
             email,
         ]);
-
+f
         if (checkResult.rows.length > 0) {
             return res.status(409).json({ message: "Email already exists. Try logging in." });
         }
@@ -128,8 +136,10 @@ app.post("/register", async (req, res) => {
 
         res.status(201).json({ message: 'Registered, Login to Continue' });
     } catch (err) {
-        console.log("Registration error:", err);
-        res.status(500).json({ message: "Server error" })
+        // Improved error logging
+        console.error("Registration error:", err);
+        // Always return error details for debugging (remove in production)
+        res.status(500).json({ message: "Server error", error: err.message });
     }
 });
 
@@ -218,4 +228,5 @@ server.listen(port, '0.0.0.0', () => {
     console.log(`✅ Server and Socket.io running on port ${port}`);
 });
 
+//testing comment added
 //testing comment added
